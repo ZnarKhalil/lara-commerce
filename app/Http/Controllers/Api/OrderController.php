@@ -126,20 +126,20 @@ class OrderController extends Controller
         }
     }
 
-    public function track(Order $order)
-    {
-        Gate::authorize('view', $order);
+    // public function track(Order $order)
+    // {
+    //     Gate::authorize('view', $order);
 
-        $trackingInfo = [
-            'order_number' => $order->order_number,
-            'status' => $order->status,
-            'payment_status' => $order->payment_status,
-            'created_at' => $order->created_at,
-            'updated_at' => $order->updated_at,
-        ];
+    //     $trackingInfo = [
+    //         'order_number' => $order->order_number,
+    //         'status' => $order->status,
+    //         'payment_status' => $order->payment_status,
+    //         'created_at' => $order->created_at,
+    //         'updated_at' => $order->updated_at,
+    //     ];
 
-        return $this->successResponse($trackingInfo);
-    }
+    //     return $this->successResponse($trackingInfo);
+    // }
 
     public function updateStatus(UpdateOrderStatusRequest $request, Order $order)
     {

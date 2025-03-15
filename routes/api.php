@@ -20,7 +20,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Products (public read)
     Route::get('products', [ProductController::class, 'index']);
     Route::get('products/{product}', [ProductController::class, 'show']);
-    Route::get('products/search/{query}', [ProductController::class, 'search']);
     Route::get('products/{product}/related', [ProductController::class, 'related']);
 
     // Categories (public read)

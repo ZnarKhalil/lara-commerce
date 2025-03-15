@@ -80,16 +80,6 @@ class ProductController extends Controller
         return $this->successResponse(null, 'Product deleted successfully');
     }
 
-    public function search($query)
-    {
-        $products = Product::where('name', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
-            ->with('categories')
-            ->paginate(15);
-
-        return $this->successResponse($products);
-    }
-
     public function related(Product $product)
     {
         $related = Product::whereHas('categories', function ($query) use ($product) {
