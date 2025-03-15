@@ -17,7 +17,7 @@ class AuthenticationTest extends TestCase
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password123',
-            'password_confirmation' => 'password123'
+            'password_confirmation' => 'password123',
         ]);
 
         $response->assertStatus(200)
@@ -30,29 +30,29 @@ class AuthenticationTest extends TestCase
                         'email',
                         'role',
                         'created_at',
-                        'updated_at'
+                        'updated_at',
                     ],
-                    'token'
-                ]
+                    'token',
+                ],
             ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',
-            'role' => UserRole::USER->value
+            'role' => UserRole::USER->value,
         ]);
     }
 
     public function test_user_cannot_register_with_existing_email()
     {
         User::factory()->create([
-            'email' => 'test@example.com'
+            'email' => 'test@example.com',
         ]);
 
         $response = $this->postJson('/api/auth/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password123',
-            'password_confirmation' => 'password123'
+            'password_confirmation' => 'password123',
         ]);
 
         $response->assertStatus(422)
@@ -63,12 +63,12 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create([
             'email' => 'test@example.com',
-            'password' => bcrypt('password123')
+            'password' => bcrypt('password123'),
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'test@example.com',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(200)
@@ -79,10 +79,10 @@ class AuthenticationTest extends TestCase
                         'id',
                         'name',
                         'email',
-                        'role'
+                        'role',
                     ],
-                    'token'
-                ]
+                    'token',
+                ],
             ]);
     }
 
@@ -90,20 +90,20 @@ class AuthenticationTest extends TestCase
     {
         User::factory()->create([
             'email' => 'test@example.com',
-            'password' => bcrypt('password123')
+            'password' => bcrypt('password123'),
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'test@example.com',
-            'password' => 'wrong_password'
+            'password' => 'wrong_password',
         ]);
 
         $response->assertStatus(422)
             ->assertJson([
                 'message' => 'The provided credentials are incorrect.',
                 'errors' => [
-                    'email' => ['The provided credentials are incorrect.']
-                ]
+                    'email' => ['The provided credentials are incorrect.'],
+                ],
             ]);
     }
 
@@ -112,13 +112,13 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
             ->postJson('/api/auth/logout');
 
         $response->assertStatus(200)
             ->assertJson([
                 'status' => 'success',
-                'message' => 'Logged out successfully'
+                'message' => 'Logged out successfully',
             ]);
 
         $this->assertDatabaseCount('personal_access_tokens', 0);
@@ -129,7 +129,7 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/auth/me');
 
         $response->assertStatus(200)
@@ -139,8 +139,8 @@ class AuthenticationTest extends TestCase
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    'role' => $user->role->value
-                ]
+                    'role' => $user->role->value,
+                ],
             ]);
     }
 
@@ -150,7 +150,7 @@ class AuthenticationTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'message' => 'Unauthenticated.'
+                'message' => 'Unauthenticated.',
             ]);
     }
 }

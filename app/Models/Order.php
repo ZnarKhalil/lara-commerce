@@ -19,7 +19,7 @@ class Order extends Model
         'payment_status',
         'payment_method',
         'shipping_address',
-        'billing_address'
+        'billing_address',
     ];
 
     protected $casts = [
@@ -37,4 +37,4 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-} 
+}

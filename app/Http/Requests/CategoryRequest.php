@@ -19,10 +19,10 @@ class CategoryRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('categories')->ignore($this->category)
+                Rule::unique('categories')->ignore($this->category),
             ],
             'description' => 'nullable|string',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ];
 
         if ($this->isMethod('PATCH') || $this->isMethod('PUT')) {
@@ -31,4 +31,4 @@ class CategoryRequest extends FormRequest
 
         return $rules;
     }
-} 
+}

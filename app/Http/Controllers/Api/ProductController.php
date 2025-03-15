@@ -50,6 +50,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->load('categories');
+
         return $this->successResponse($product);
     }
 
@@ -75,6 +76,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
+
         return $this->successResponse(null, 'Product deleted successfully');
     }
 
@@ -93,9 +95,9 @@ class ProductController extends Controller
         $related = Product::whereHas('categories', function ($query) use ($product) {
             $query->whereIn('categories.id', $product->categories->pluck('id'));
         })
-        ->where('id', '!=', $product->id)
-        ->limit(8)
-        ->get();
+            ->where('id', '!=', $product->id)
+            ->limit(8)
+            ->get();
 
         return $this->successResponse($related);
     }

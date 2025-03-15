@@ -24,11 +24,11 @@ class ProductRequest extends FormRequest
                 'string',
                 $this->isMethod('PUT') || $this->isMethod('PATCH')
                     ? Rule::unique('products')->ignore($this->route('product'))
-                    : Rule::unique('products')
+                    : Rule::unique('products'),
             ],
             'category_ids' => ['required', 'array'],
             'category_ids.*' => ['exists:categories,id'],
-            'is_active' => ['boolean']
+            'is_active' => ['boolean'],
         ];
 
         if ($this->isMethod('PATCH') || $this->isMethod('PUT')) {
@@ -56,4 +56,4 @@ class ProductRequest extends FormRequest
     //         'category_ids.*.exists' => 'One or more selected categories are invalid'
     //     ];
     // }
-} 
+}

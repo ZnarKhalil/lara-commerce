@@ -37,7 +37,7 @@ class OrderRequest extends FormRequest
             'billing_address.state' => 'required|string',
             'billing_address.zip' => 'required|string',
             'billing_address.country' => 'required|string',
-            'payment_method' => 'required|integer'
+            'payment_method' => 'required|integer',
         ];
     }
 }

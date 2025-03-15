@@ -9,9 +9,9 @@ enum UserRole: int
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::USER => 'User',
             self::ADMIN => 'Admin',
         };
     }
-} 
+}

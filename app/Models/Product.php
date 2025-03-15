@@ -15,7 +15,7 @@ class Product extends Model
         'price',
         'stock',
         'sku',
-        'is_active'
+        'is_active',
     ];
 
     public function categories(): BelongsToMany
@@ -27,4 +27,4 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-} 
+}

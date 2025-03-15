@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -23,15 +23,19 @@ class CategoryController extends Controller
             ->withCount('products')
             ->paginate($request->per_page ?? 15);
 
-        return $this->successResponse(
-            CategoryResource::collection($categories)
-        );
+        return $this->successResponse([
+            'data' => CategoryResource::collection($categories),
+            'current_page' => $categories->currentPage(),
+            'per_page' => $categories->perPage(),
+            'total' => $categories->total(),
+            'last_page' => $categories->lastPage(),
+        ]);
     }
 
     public function store(CategoryRequest $request)
     {
         $validated = $request->validated();
-        
+
         $category = Category::create([
             'name' => $validated['name'],
             'slug' => Str::slug($validated['name']),
@@ -49,7 +53,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         $category->loadCount('products');
-        
+
         return $this->successResponse($category);
     }
 
@@ -97,10 +101,10 @@ class CategoryController extends Controller
                 $query->where('price', '<=', $price);
             })
             ->when($request->sort_by, function ($query) use ($request) {
-                $sortField = in_array($request->sort_by, ['name', 'price', 'created_at']) 
-                    ? $request->sort_by 
+                $sortField = in_array($request->sort_by, ['name', 'price', 'created_at'])
+                    ? $request->sort_by
                     : 'created_at';
-                
+
                 $sortDirection = $request->sort_direction === 'asc' ? 'asc' : 'desc';
                 $query->orderBy($sortField, $sortDirection);
             })
@@ -108,4 +112,4 @@ class CategoryController extends Controller
 
         return $this->successResponse($products);
     }
-} 
+}

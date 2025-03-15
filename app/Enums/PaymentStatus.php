@@ -8,4 +8,4 @@ enum PaymentStatus: int
     case PAID = 2;
     case FAILED = 3;
     case REFUNDED = 4;
-} 
+}

@@ -28,7 +28,7 @@ class AuthController extends Controller
 
         return $this->successResponse([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ], 'User registered successfully');
     }
 
@@ -48,13 +48,14 @@ class AuthController extends Controller
 
         return $this->successResponse([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ], 'Logged in successfully');
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
+
         return $this->successResponse(null, 'Logged out successfully');
     }
 

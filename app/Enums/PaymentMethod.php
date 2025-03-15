@@ -8,4 +8,4 @@ enum PaymentMethod: int
     case PAYPAL = 2;
     case BANK_TRANSFER = 3;
     case CASH_ON_DELIVERY = 4;
-} 
+}
