@@ -41,19 +41,4 @@ class ProductRequest extends FormRequest
 
         return $rules;
     }
-
-    // public function messages()
-    // {
-    //     return [
-    //         'name.required' => 'The product name is required',
-    //         'price.required' => 'The product price is required',
-    //         'price.min' => 'The price must be greater than or equal to 0',
-    //         'stock.required' => 'The product stock is required',
-    //         'stock.min' => 'The stock must be greater than or equal to 0',
-    //         'sku.required' => 'The SKU is required',
-    //         'sku.unique' => 'This SKU has already been taken',
-    //         'category_ids.required' => 'At least one category must be selected',
-    //         'category_ids.*.exists' => 'One or more selected categories are invalid'
-    //     ];
-    // }
 }
