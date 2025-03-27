@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -24,7 +25,13 @@ class ProductController extends Controller
             ->with('categories')
             ->paginate($request->per_page ?? 15);
 
-        return $this->successResponse($products);
+        return $this->successResponse([
+            'data' => ProductResource::collection($products),
+            'current_page' => $products->currentPage(),
+            'per_page' => $products->perPage(),
+            'total' => $products->total(),
+            'last_page' => $products->lastPage(),
+        ]);
     }
 
     public function store(ProductRequest $request)
@@ -44,14 +51,18 @@ class ProductController extends Controller
         $product->categories()->sync($validated['category_ids']);
         $product->load('categories');
 
-        return $this->successResponse($product, 'Product created successfully', 201);
+        return $this->successResponse(
+            new ProductResource($product),
+            'Product created successfully',
+            201
+        );
     }
 
     public function show(Product $product)
     {
         $product->load('categories');
 
-        return $this->successResponse($product);
+        return $this->successResponse(new ProductResource($product));
     }
 
     public function update(ProductRequest $request, Product $product)
@@ -70,7 +81,10 @@ class ProductController extends Controller
 
         $product->load('categories');
 
-        return $this->successResponse($product, 'Product updated successfully');
+        return $this->successResponse(
+            new ProductResource($product),
+            'Product updated successfully'
+        );
     }
 
     public function destroy(Product $product)
@@ -86,9 +100,10 @@ class ProductController extends Controller
             $query->whereIn('categories.id', $product->categories->pluck('id'));
         })
             ->where('id', '!=', $product->id)
+            ->with('categories')
             ->limit(8)
             ->get();
 
-        return $this->successResponse($related);
+        return $this->successResponse(ProductResource::collection($related));
     }
 }
