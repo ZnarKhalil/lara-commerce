@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -27,7 +28,7 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->successResponse([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token,
         ], 'User registered successfully');
     }
@@ -47,7 +48,7 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->successResponse([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token,
         ], 'Logged in successfully');
     }
@@ -61,6 +62,6 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        return $this->successResponse($request->user());
+        return $this->successResponse(new UserResource($request->user()));
     }
 }

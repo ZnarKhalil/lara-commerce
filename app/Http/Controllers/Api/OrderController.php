@@ -7,6 +7,8 @@ use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Http\Requests\UpdateOrderStatusRequest;
+use App\Http\Resources\OrderResource;
+use App\Http\Resources\OrderStatusResource;
 use App\Models\Order;
 use App\Models\Product;
 use Gate;
@@ -23,10 +25,19 @@ class OrderController extends Controller
                 $query->where('user_id', $request->user()->id);
             })
             ->with('orderItems.product')
+            ->when($request->user()->isAdmin(), function ($query) {
+                $query->with('user');
+            })
             ->latest()
             ->paginate(15);
 
-        return $this->successResponse($orders);
+        return $this->successResponse([
+            'data' => OrderResource::collection($orders),
+            'current_page' => $orders->currentPage(),
+            'per_page' => $orders->perPage(),
+            'total' => $orders->total(),
+            'last_page' => $orders->lastPage(),
+        ]);
     }
 
     public function store(OrderRequest $request)
@@ -80,7 +91,11 @@ class OrderController extends Controller
 
             $order->load('orderItems.product');
 
-            return $this->successResponse($order, 'Order created successfully', 201);
+            return $this->successResponse(
+                new OrderResource($order),
+                'Order created successfully',
+                201
+            );
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -92,9 +107,13 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         Gate::authorize('view', $order);
-        $order->load('orderItems.product');
+        
+        $order->load('orderItems.product')
+            ->when(request()->user()->isAdmin(), function ($query) {
+                $query->load('user');
+            });
 
-        return $this->successResponse($order);
+        return $this->successResponse(new OrderResource($order));
     }
 
     public function cancel(Order $order)
@@ -114,10 +133,15 @@ class OrderController extends Controller
             }
 
             $order->update(['status' => OrderStatus::CANCELLED]);
+            
+            $order->load('orderItems.product');
 
             DB::commit();
 
-            return $this->successResponse($order, 'Order cancelled successfully');
+            return $this->successResponse(
+                new OrderResource($order),
+                'Order cancelled successfully'
+            );
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -146,7 +170,12 @@ class OrderController extends Controller
         Gate::authorize('updateStatus', $order);
 
         $order->update(['status' => $request->validated('status')]);
+        
+        
 
-        return $this->successResponse($order, 'Order status updated successfully');
+        return $this->successResponse(
+            new OrderStatusResource($order),
+            'Order status updated successfully'
+        );
     }
 }
